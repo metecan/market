@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
-import { PropTypes } from 'prop-types';
 import styled from 'styled-components';
 import { ReactComponent as Prev } from '../assets/prev.svg';
 import { ReactComponent as Next } from '../assets/next.svg';
@@ -68,7 +67,7 @@ const StyledPaginateContainer = styled.div`
   }
 `;
 
-const Pagination = ({ itemsPerPage, items }) => {
+const Pagination = () => {
   const pageCount = 1740 / 2 / 16;
 
   const dispatch = useDispatch();
@@ -101,11 +100,6 @@ const Pagination = ({ itemsPerPage, items }) => {
       />
     </StyledPaginateContainer>
   );
-};
-
-Pagination.propTypes = {
-  itemsPerPage: PropTypes.number.isRequired,
-  items: PropTypes.array.isRequired,
 };
 
 export default Pagination;
