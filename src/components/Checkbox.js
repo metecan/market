@@ -70,16 +70,25 @@ const StyledLabelText = styled.p`
 
 const Checkbox = ({ label, slug, name, count }) => {
   const [isChecked, setIsChecked] = React.useState(false);
-
   const dispatch = useDispatch();
 
   const handleChange = () => {
-    if (!isChecked) {
-      setIsChecked(!isChecked);
-      dispatch({ type: TYPES.SET_SELECTED_BRANDS, payload: slug });
+    if (name === 'brands') {
+      if (!isChecked) {
+        setIsChecked(!isChecked);
+        dispatch({ type: TYPES.SET_SELECTED_BRANDS, payload: slug });
+      } else {
+        setIsChecked(!isChecked);
+        dispatch({ type: TYPES.REMOVE_FROM_BRANDS, payload: slug });
+      }
     } else {
-      setIsChecked(!isChecked);
-      dispatch({ type: TYPES.REMOVE_FROM_BRANDS, payload: slug });
+      if (!isChecked) {
+        setIsChecked(!isChecked);
+        dispatch({ type: TYPES.SET_SELECTED_TAGS, payload: label });
+      } else {
+        setIsChecked(!isChecked);
+        dispatch({ type: TYPES.REMOVE_FROM_TAGS, payload: label });
+      }
     }
   };
 
@@ -99,7 +108,7 @@ const Checkbox = ({ label, slug, name, count }) => {
 
 Checkbox.propTypes = {
   label: PropTypes.string.isRequired,
-  slug: PropTypes.string.isRequired,
+  slug: PropTypes.string,
   name: PropTypes.string.isRequired,
   count: PropTypes.number.isRequired,
 };

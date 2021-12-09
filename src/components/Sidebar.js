@@ -5,6 +5,7 @@ import Input from './Input';
 import Checkbox from './Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBrands } from '../state/actions/brands/getBrands';
+import { getTags } from '../state/actions/tags/getTags';
 
 const StyledSideBarWrapper = styled.div`
   & > div:not(:last-child) {
@@ -52,24 +53,104 @@ const SortingRadioItems = ['Price low to high', 'Price high to low', 'New to old
 
 const Sidebar = () => {
   const { brands } = useSelector((state) => state.brands);
-
+  const { tags } = useSelector((state) => state.tags);
+  const { products } = useSelector((state) => state.products);
   const [brandSearch, setBrandSearch] = React.useState('');
+  const [tagSearch, setTagSearch] = React.useState('');
+
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     dispatch(getBrands());
   }, [dispatch]);
 
+  React.useEffect(() => {
+    dispatch(getTags(products));
+  }, [dispatch, products]);
+
+  const brandItemCount = () => {
+    const brandsItemsCount = [];
+    let brandsTotal = 0;
+
+    products.forEach((item) => {
+      if (brandsItemsCount[item.manufacturer]) {
+        brandsItemsCount[item.manufacturer]++;
+      } else {
+        brandsItemsCount[item.manufacturer] = 1;
+      }
+    });
+
+    for (let item in brandsItemsCount) {
+      brandsTotal += brandsItemsCount[item];
+    }
+
+    return { brandsItemsCount, brandsTotal };
+  };
+
+  const tagItemCount = () => {
+    const tagsItemsCount = [];
+    let tagsTotal = 0;
+
+    products.map((item) => {
+      item.tags.map((tag) => {
+        if (tagsItemsCount[tag]) {
+          return tagsItemsCount[tag]++;
+        } else {
+          return (tagsItemsCount[tag] = 1);
+        }
+      });
+      return null;
+    });
+
+    for (let item in tagsItemsCount) {
+      tagsTotal += tagsItemsCount[item];
+    }
+
+    return { tagsItemsCount, tagsTotal };
+  };
+
+  const { brandsItemsCount, brandsTotal } = brandItemCount();
+  const { tagsItemsCount, tagsTotal } = tagItemCount();
+
   const handleBrandSearch = () => {
     if (brandSearch.length > 0) {
       return brands
         .filter((brand) => brand.name.toLowerCase().includes(brandSearch.toLowerCase()))
         .map((brand) => {
-          return <Checkbox key={brand.slug} label={brand.name} slug={brand.slug} count={9} name="brands" />;
+          return (
+            <Checkbox
+              key={brand.slug}
+              label={brand.name}
+              slug={brand.slug}
+              count={brandsItemsCount[brand.slug]}
+              name="brands"
+            />
+          );
         });
     }
     return brands.map((brand) => {
-      return <Checkbox key={brand.slug} label={brand.name} slug={brand.slug} count={9} name="brands" />;
+      return (
+        <Checkbox
+          key={brand.slug}
+          label={brand.name}
+          slug={brand.slug}
+          count={brandsItemsCount[brand.slug]}
+          name="brands"
+        />
+      );
+    });
+  };
+
+  const handleTagSearch = () => {
+    if (tagSearch.length > 0) {
+      return tags
+        .filter((tag) => tag.toLowerCase().includes(tagSearch.toLowerCase()))
+        .map((tag) => {
+          return <Checkbox key={tag} label={tag} count={tagsItemsCount[tag]} name="tags" />;
+        });
+    }
+    return tags.map((tag) => {
+      return <Checkbox key={tag} label={tag} count={tagsItemsCount[tag]} name="tags" />;
     });
   };
 
@@ -90,7 +171,7 @@ const Sidebar = () => {
             <Input placeholder="Search brand" onChange={setBrandSearch} />
           </StyledInputWrapper>
           <StyledItemWrapper>
-            {brandSearch === '' && <Checkbox label="All" count={18} name="brands" slug="all" />}
+            {brandSearch === '' && <Checkbox label="All" count={brandsTotal} name="brands" slug="all" />}
             {handleBrandSearch()}
           </StyledItemWrapper>
         </StyledFilterItemsWrapper>
@@ -99,14 +180,11 @@ const Sidebar = () => {
         <StyledFilterTitle>Tags</StyledFilterTitle>
         <StyledFilterItemsWrapper big>
           <StyledInputWrapper>
-            <Input placeholder="Search tag" />
+            <Input placeholder="Search tag" onChange={setTagSearch} />
           </StyledInputWrapper>
           <StyledItemWrapper>
-            <Checkbox label="All" count={18} name="tags" />
-            <Checkbox label="Beach" count={9} name="tags" />
-            <Checkbox label="Beach" count={9} name="tags" />
-            <Checkbox label="Beach" count={9} name="tags" />
-            <Checkbox label="Beach" count={9} name="tags" />
+            {tagSearch === '' && <Checkbox label="All" count={tagsTotal} name="tags" />}
+            {handleTagSearch()}
           </StyledItemWrapper>
         </StyledFilterItemsWrapper>
       </StyledFilterWrapper>

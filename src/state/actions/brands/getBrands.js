@@ -5,7 +5,7 @@ export const getBrands = () => async (dispatch) => {
   const data = await res.json();
   if (data) {
     dispatch({
-      payload: data.companies,
+      payload: data,
       type: TYPES.GET_BRANDS,
     });
   }

@@ -5,7 +5,7 @@ export const getProducts = (itemType) => async (dispatch) => {
   const data = await res.json();
   if (data) {
     dispatch({
-      payload: data.items.filter((p) => p.itemType === itemType),
+      payload: data.filter((p) => p.itemType === itemType),
       type: TYPES.GET_PRODUCTS,
     });
   }

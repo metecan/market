@@ -1,7 +1,10 @@
-const items = require('./items.json');
-const companies = require('./companies.json');
+const jsonServer = require('json-server');
+const server = jsonServer.create();
+const router = jsonServer.router('db.json');
+const middlewares = jsonServer.defaults();
 
-module.exports = () => ({
-  items,
-  companies,
+server.use(middlewares);
+server.use(router);
+server.listen(process.env.PORT || 5000, () => {
+  console.log('JSON Server is running');
 });

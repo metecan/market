@@ -5,6 +5,8 @@ import ProductCard from './ProductCard';
 import productImage from '../assets/product.jpg';
 import { useSelector, useDispatch } from 'react-redux';
 import { getProducts } from '../state/actions/products/getProducts';
+import TYPES from '../state/types';
+import Pagination from './Pagination';
 
 const StyledContentWrapper = styled.div``;
 
@@ -23,36 +25,87 @@ const StyledProductList = styled.div`
   margin-top: 16px;
   width: 608px;
   height: 1008px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  gap: 20px opx;
+`;
+
+const StyledPaginationWrapper = styled.div`
+  width: 608px;
   display: flex;
-  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
 `;
 
 const buttons = ['mug', 'shirt'];
 
 const Content = () => {
-  const { products, itemType } = useSelector((state) => state.products);
+  const { products, filteredProducts, itemType } = useSelector((state) => state.products);
+  const { selectedBrands } = useSelector((state) => state.brands);
+  const { selectedTags } = useSelector((state) => state.tags);
+  const { startPage, endPage } = useSelector((state) => state.pagination);
+
   const dispatch = useDispatch();
-  React.useEffect(() => dispatch(getProducts(itemType)), [dispatch, itemType]);
+
+  React.useEffect(() => {
+    dispatch(getProducts(itemType));
+  }, [dispatch, itemType]);
+
+  React.useEffect(() => {
+    if (selectedBrands.length > 0) {
+      dispatch({ type: TYPES.FILTER_BY_BRANDS, payload: selectedBrands });
+    } else {
+      dispatch({ type: TYPES.CLEAR_FILTERED_PRODUCTS });
+    }
+  }, [dispatch, itemType, selectedBrands]);
+
+  React.useEffect(() => {
+    if (selectedTags.length > 0) {
+      dispatch({ type: TYPES.FILTER_BY_TAGS, payload: selectedTags });
+    } else {
+      dispatch({ type: TYPES.CLEAR_FILTERED_PRODUCTS });
+    }
+  }, [dispatch, selectedTags]);
+
+  const renderDatas = () => {
+    if (filteredProducts.length === 0 && products) {
+      return products.slice(startPage, endPage).map((product) => {
+        return (
+          <ProductCard
+            key={product.added}
+            name={product.name}
+            price={product.price}
+            slug={product.slug}
+            image={productImage}
+          />
+        );
+      });
+    } else if (filteredProducts.length > 0) {
+      return filteredProducts.slice(startPage, endPage).map((product) => {
+        return (
+          <ProductCard
+            key={product.added}
+            name={product.name}
+            price={product.price}
+            slug={product.slug}
+            image={productImage}
+          />
+        );
+      });
+    } else {
+      return 'no products';
+    }
+  };
 
   return (
     <StyledContentWrapper>
       <StyledContentTitle>Products</StyledContentTitle>
       <GroupButton buttons={buttons} />
-      <StyledProductList>
-        {products
-          ? products.slice(0, 16).map((product) => {
-              return (
-                <ProductCard
-                  key={product.added}
-                  name={product.name}
-                  price={product.price}
-                  slug={product.slug}
-                  image={productImage}
-                />
-              );
-            })
-          : 'no products'}
-      </StyledProductList>
+      <StyledProductList>{renderDatas()}</StyledProductList>
+      <StyledPaginationWrapper>
+        <Pagination />
+      </StyledPaginationWrapper>
     </StyledContentWrapper>
   );
 };
