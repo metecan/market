@@ -8,7 +8,11 @@ import { getProducts } from '../state/actions/products/getProducts';
 import TYPES from '../state/types';
 import Pagination from './Pagination';
 
-const StyledContentWrapper = styled.div``;
+const StyledContentWrapper = styled.div`
+  @media (max-width: 720px) {
+    transform: scale(0.6);
+  }
+`;
 
 const StyledContentTitle = styled.span`
   display: block;
@@ -29,6 +33,10 @@ const StyledProductList = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   gap: 20px opx;
+
+  @media (max-width: 720px) {
+    width: 100%;
+  }
 `;
 
 const StyledPaginationWrapper = styled.div`
@@ -36,6 +44,15 @@ const StyledPaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const StyledContentHeader = styled.div`
+  @media (max-width: 720px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const buttons = ['mug', 'shirt'];
@@ -100,8 +117,10 @@ const Content = () => {
 
   return (
     <StyledContentWrapper>
-      <StyledContentTitle>Products</StyledContentTitle>
-      <GroupButton buttons={buttons} />
+      <StyledContentHeader>
+        <StyledContentTitle>Products</StyledContentTitle>
+        <GroupButton buttons={buttons} />
+      </StyledContentHeader>
       <StyledProductList>{renderDatas()}</StyledProductList>
       <StyledPaginationWrapper>
         <Pagination />

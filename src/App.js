@@ -43,6 +43,13 @@ const StyledContainer = styled.div`
   & > div:not(:last-child) {
     margin-right: 16px;
   }
+
+  @media (max-width: 720px) {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
 `;
 
 const StyledAppWrapper = styled.div`

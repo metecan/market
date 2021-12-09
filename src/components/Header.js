@@ -20,6 +20,12 @@ const StyledContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+
+  @media (max-width: 720px) {
+    width: 100%;
+    justify-content: flex-start;
+    margin-left: 20px;
+  }
 `;
 
 const StyledLogo = styled.img`
@@ -36,6 +42,9 @@ const StyledBasketTotalPriceWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 720px) {
+    right: 10px;
+  }
 `;
 
 const StyledBasketIcon = styled.img`
